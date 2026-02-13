@@ -7,11 +7,20 @@ import type {
   SearchRequestParams,
 } from "./types";
 
+/**
+ * API client for interacting with the DAIMS endpoints.
+ */
 export class DaimsClient {
   private readonly apiKey: string;
   private readonly timeoutMs?: number;
   private readonly fetchImpl?: typeof fetch;
 
+  /**
+   * Creates a new DAIMS API client.
+   *
+   * @param options - Client configuration.
+   * @throws {DaimsApiError} If `apiKey` is missing.
+   */
   constructor(options: DaimsClientOptions) {
     if (!options?.apiKey) {
       throw new DaimsApiError("apiKey is required to initialize DaimsClient.", {
@@ -24,6 +33,15 @@ export class DaimsClient {
     this.fetchImpl = options.fetch;
   }
 
+  /**
+   * Searches prompt cards.
+   *
+   * Sends `POST /api/search`.
+   *
+   * @param params - Search request payload.
+   * @returns A paginated list of matching cards.
+   * @throws {DaimsApiError} On validation, network, timeout, or HTTP errors.
+   */
   async search(params: SearchRequestParams): Promise<SearchListResponse> {
     const body: Record<string, unknown> = {
       card_type: params.card_type,
@@ -48,6 +66,15 @@ export class DaimsClient {
     });
   }
 
+  /**
+   * Retrieves prompt details for a card key.
+   *
+   * Sends `POST /api/card`.
+   *
+   * @param skey - Card key returned from search results.
+   * @returns Prompt detail data for the specified card key.
+   * @throws {DaimsApiError} If `skey` is empty or the request fails.
+   */
   async getPrompt(skey: string): Promise<GetPromptResponse> {
     if (!skey) {
       throw new DaimsApiError("skey is required.", {
