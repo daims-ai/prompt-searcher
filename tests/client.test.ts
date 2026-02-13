@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { DaimsApiError, DaimsClient, getPrompt, search } from "../src/index";
+import { DaimsApiError, DaimsClient } from "../src/index";
 import type { GetPromptResponse, SearchListResponse } from "../src/types";
 
 function jsonResponse(body: unknown, status = 200): Response {
@@ -37,7 +37,10 @@ describe("DaimsClient", () => {
     });
 
     expect(fetchMock).toHaveBeenCalledTimes(1);
-    const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit];
+    const [url, init] = fetchMock.mock.calls[0] as unknown as [
+      string,
+      RequestInit,
+    ];
 
     expect(url).toBe("https://api.daims.ai/api/search");
     expect(init.method).toBe("POST");
@@ -76,7 +79,10 @@ describe("DaimsClient", () => {
     });
 
     const result = await client.getPrompt("card-key");
-    const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit];
+    const [url, init] = fetchMock.mock.calls[0] as unknown as [
+      string,
+      RequestInit,
+    ];
 
     expect(result).toEqual(payload);
     expect(url).toBe("https://api.daims.ai/api/card");
@@ -152,45 +158,6 @@ describe("DaimsClient", () => {
     expect(error).toMatchObject({
       code: "NETWORK_ERROR",
       message: "Network request failed",
-    });
-  });
-});
-
-describe("deprecated wrappers", () => {
-  it("works when options.apiKey is provided", async () => {
-    const fetchMock = vi.fn(async () =>
-      jsonResponse({
-        count: 0,
-        hasNext: false,
-        limit: 20,
-        offset: 0,
-        items: [],
-      } satisfies SearchListResponse),
-    );
-
-    const result = await search(
-      {
-        card_type: "create",
-        search_type: "keyword",
-        value: "landscape",
-      },
-      {
-        apiKey: "test-key",
-        fetch: fetchMock as unknown as typeof fetch,
-      },
-    );
-
-    expect(result.count).toBe(0);
-  });
-
-  it("throws CONFIG_ERROR when options.apiKey is missing", async () => {
-    const error = await getPrompt("card-key").catch(
-      (caught: unknown) => caught,
-    );
-
-    expect(error).toBeInstanceOf(DaimsApiError);
-    expect(error).toMatchObject({
-      code: "CONFIG_ERROR",
     });
   });
 });
