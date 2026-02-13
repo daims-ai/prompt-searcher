@@ -5,7 +5,7 @@ Official JavaScript / TypeScript SDK for the DAIMS API.
 ## Install
 
 ```bash
-npm install prompt-searcher
+pnpm add prompt-searcher
 ```
 
 ## Quick start
@@ -81,13 +81,13 @@ try {
 ## Development
 
 ```bash
-npm run build
-npm run test
-npm run lint
+pnpm build
+pnpm test
+pnpm lint
 ```
 
 Docs:
 
 ```bash
-npm run docs:dev
+pnpm docs:dev
 ```
