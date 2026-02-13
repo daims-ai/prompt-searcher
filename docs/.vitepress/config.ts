@@ -1,7 +1,7 @@
 import { defineConfig } from "vitepress";
 
 export default defineConfig({
-  title: "DAIMS SDK",
+  title: "Prompt Searcher",
   description: "Official JavaScript / TypeScript SDK for the DAIMS API",
   themeConfig: {
     nav: [
