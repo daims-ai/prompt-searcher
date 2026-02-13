@@ -101,26 +101,13 @@ export interface SearchListItemMetadata {
  */
 export interface GetPromptResponse {
   /**
-   * Detailed prompt card information.
+   * Prompt text.
    */
-  detail: PromptDetail;
+  prompt: string;
   /**
    * Indicates request success.
    */
   success: boolean;
-}
-
-/**
- * Prompt card detail returned from `POST /api/card`.
- */
-export interface PromptDetail {
-  key: string;
-  maker: string;
-  model: string;
-  prompts: string[];
-  provider: string;
-  refs: string;
-  type: string;
 }
 
 /**
