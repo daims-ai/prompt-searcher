@@ -44,7 +44,6 @@ export interface GetPromptResponse {
 
 export interface DaimsClientOptions {
   apiKey: string;
-  baseUrl?: string;
   timeoutMs?: number;
   fetch?: typeof fetch;
 }

@@ -7,7 +7,6 @@ import { DaimsClient } from "prompt-searcher";
 
 const client = new DaimsClient({
   apiKey: "your-api-key",
-  baseUrl: "https://api.daims.ai",
   timeoutMs: 10_000,
 });
 ```

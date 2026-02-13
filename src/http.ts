@@ -2,7 +2,6 @@ import { DaimsApiError } from "./errors";
 
 interface RequestJsonOptions {
   apiKey: string;
-  baseUrl: string;
   path: string;
   body?: unknown;
   timeoutMs?: number;
@@ -10,6 +9,7 @@ interface RequestJsonOptions {
 }
 
 const DEFAULT_TIMEOUT_MS = 10_000;
+const API_BASE_URL = "https://api.daims.ai";
 
 function getMessageFromBody(body: unknown): string | undefined {
   if (typeof body === "string" && body.length > 0) {
@@ -56,7 +56,7 @@ export async function requestJson<T>(options: RequestJsonOptions): Promise<T> {
   }, timeoutMs);
 
   try {
-    const url = new URL(options.path, options.baseUrl).toString();
+    const url = new URL(options.path, API_BASE_URL).toString();
     const response = await fetchImpl(url, {
       method: "POST",
       headers: {
