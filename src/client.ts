@@ -3,7 +3,7 @@ import { requestJson } from "./http";
 import type {
   DaimsClientOptions,
   GetPromptResponse,
-  SearchListResponse,
+  SearchResponse,
   SearchRequestParams,
 } from "./types";
 
@@ -39,10 +39,10 @@ export class DaimsClient {
    * Sends `POST /api/search`.
    *
    * @param params - Search request payload.
-   * @returns A paginated list of matching cards.
+   * @returns Search response containing success and paginated result data.
    * @throws {DaimsApiError} On validation, network, timeout, or HTTP errors.
    */
-  async search(params: SearchRequestParams): Promise<SearchListResponse> {
+  async search(params: SearchRequestParams): Promise<SearchResponse> {
     const body: Record<string, unknown> = {
       card_type: params.card_type,
       search_type: params.search_type,
@@ -57,7 +57,7 @@ export class DaimsClient {
       body.isPhoto = params.isPhoto;
     }
 
-    return requestJson<SearchListResponse>({
+    return requestJson<SearchResponse>({
       apiKey: this.apiKey,
       path: "/api/search",
       body,

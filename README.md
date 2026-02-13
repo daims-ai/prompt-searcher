@@ -22,6 +22,7 @@ const list = await client.search({
   search_type: "keyword",
   value: "cinematic portrait",
 });
+console.log(list.success, list.data.items);
 
 const prompt = await client.getPrompt("card-skey");
 ```
@@ -41,7 +42,7 @@ const client = new DaimsClient({
 
 Methods:
 
-- `search(params)` -> `Promise<SearchListResponse>`
+- `search(params)` -> `Promise<SearchResponse>`
 - `getPrompt(skey)` -> `Promise<GetPromptResponse>`
 
 ## Error handling
