@@ -25,7 +25,6 @@ describe("DaimsClient", () => {
 
     const client = new DaimsClient({
       apiKey: "test-key",
-      baseUrl: "https://api.daims.ai",
       fetch: fetchMock as unknown as typeof fetch,
     });
 
