@@ -27,9 +27,12 @@ import { Badge } from "@/components/ui/badge";
 
 const API_KEY = "test";
 const IMAGE_BASE_URL = "https://asset.daims.ai/images";
+const client = new DaimsClient({ apiKey: API_KEY });
 
 function App() {
   const [query, setQuery] = useState("");
+  const [imageBase64, setImageBase64] = useState<string | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [cardType, setCardType] = useState<"create" | "edit">("create");
   const [searchType, setSearchType] =
     useState<SearchRequestParams["search_type"]>("keyword");
@@ -39,9 +42,36 @@ function App() {
   const [error, setError] = useState<string | null>(null);
   const [promptDialogOpen, setPromptDialogOpen] = useState(false);
 
+  const handleFileChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      if (!file) {
+        setImageBase64(null);
+        setImagePreview(null);
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const result = reader.result as string;
+        // base64 부분만 추출 (data:image/...;base64, 제거)
+        const base64 = result.split(",")[1];
+        setImageBase64(base64);
+        setImagePreview(result);
+      };
+      reader.readAsDataURL(file);
+    },
+    [],
+  );
+
   const handleSearch = useCallback(async () => {
-    if (!query.trim()) {
-      setError("검색어를 입력해주세요.");
+    const isKeywordSearch = searchType === "keyword";
+    const searchValue = isKeywordSearch ? query : imageBase64;
+
+    if (!searchValue) {
+      setError(
+        isKeywordSearch ? "검색어를 입력해주세요." : "이미지를 선택해주세요.",
+      );
       return;
     }
 
@@ -50,11 +80,10 @@ function App() {
     setSelectedPrompt(null);
 
     try {
-      const client = new DaimsClient({ apiKey: API_KEY });
       const response = await client.search({
         card_type: cardType,
         search_type: searchType,
-        value: query,
+        value: searchValue,
       });
 
       if (response.success) {
@@ -72,7 +101,7 @@ function App() {
     } finally {
       setLoading(false);
     }
-  }, [query, cardType, searchType]);
+  }, [query, imageBase64, cardType, searchType]);
 
   const handleGetPrompt = useCallback(async (skey: string) => {
     if (!API_KEY) {
@@ -175,14 +204,32 @@ function App() {
 
               {/* Search Input */}
               <div className="flex flex-1 gap-2">
-                <Input
-                  type="text"
-                  placeholder="검색어를 입력하세요..."
-                  value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                  onKeyDown={handleKeyDown}
-                  className="flex-1"
-                />
+                {searchType === "keyword" ? (
+                  <Input
+                    type="text"
+                    placeholder="검색어를 입력하세요..."
+                    value={query}
+                    onChange={(e) => setQuery(e.target.value)}
+                    onKeyDown={handleKeyDown}
+                    className="flex-1"
+                  />
+                ) : (
+                  <div className="flex flex-1 items-center gap-3">
+                    <Input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleFileChange}
+                      className="flex-1"
+                    />
+                    {imagePreview && (
+                      <img
+                        src={imagePreview}
+                        alt="미리보기"
+                        className="size-10 rounded object-cover"
+                      />
+                    )}
+                  </div>
+                )}
                 <Button onClick={handleSearch} disabled={loading}>
                   {loading ? <Loader2 className="animate-spin" /> : <Search />}
                   검색
