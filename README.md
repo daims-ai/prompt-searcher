@@ -44,23 +44,6 @@ Methods:
 - `search(params)` -> `Promise<SearchListResponse>`
 - `getPrompt(skey)` -> `Promise<GetPromptResponse>`
 
-### Deprecated wrappers
-
-Top-level wrapper functions are still available for backward compatibility:
-
-```ts
-import { getPrompt, search } from "prompt-searcher";
-
-const list = await search(
-  { card_type: "create", search_type: "keyword", value: "landscape" },
-  { apiKey: "your-api-key" },
-);
-
-const prompt = await getPrompt("card-skey", { apiKey: "your-api-key" });
-```
-
-These wrappers are deprecated. Prefer `DaimsClient`.
-
 ## Error handling
 
 All non-2xx responses and network failures throw `DaimsApiError`.

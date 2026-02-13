@@ -17,7 +17,6 @@ export default defineConfig({
         text: "API",
         items: [
           { text: "Client", link: "/api/client" },
-          { text: "Legacy API", link: "/api/legacy" },
           { text: "Errors", link: "/api/errors" },
         ],
       },

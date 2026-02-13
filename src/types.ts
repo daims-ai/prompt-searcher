@@ -47,5 +47,3 @@ export interface DaimsClientOptions {
   timeoutMs?: number;
   fetch?: typeof fetch;
 }
-
-export interface LegacyRequestOptions extends DaimsClientOptions {}
