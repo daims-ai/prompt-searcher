@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import { DaimsApiError, DaimsClient } from "../src/index";
-import type { GetPromptResponse, SearchListResponse } from "../src/types";
+import type { GetPromptResponse, SearchResponse } from "../src/types";
 
 function jsonResponse(body: unknown, status = 200): Response {
   return new Response(JSON.stringify(body), {
@@ -15,12 +15,15 @@ describe("DaimsClient", () => {
   it("sends search request with auth header and optional fields", async () => {
     const fetchMock = vi.fn(async () =>
       jsonResponse({
-        count: 1,
-        hasNext: false,
-        limit: 20,
-        offset: 0,
-        items: [],
-      } satisfies SearchListResponse),
+        data: {
+          count: 1,
+          hasNext: false,
+          limit: 20,
+          offset: 0,
+          items: [],
+        },
+        success: true,
+      } satisfies SearchResponse),
     );
 
     const client = new DaimsClient({

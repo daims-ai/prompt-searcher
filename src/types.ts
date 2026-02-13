@@ -25,7 +25,7 @@ export interface SearchRequestParams {
 }
 
 /**
- * Paginated response returned from `POST /api/search`.
+ * Paginated payload returned in `data` from `POST /api/search`.
  */
 export interface SearchListResponse {
   /**
@@ -48,6 +48,20 @@ export interface SearchListResponse {
    * Search result items for the current page.
    */
   items: SearchListItem[];
+}
+
+/**
+ * Response returned from `POST /api/search`.
+ */
+export interface SearchResponse {
+  /**
+   * Paginated search payload.
+   */
+  data: SearchListResponse;
+  /**
+   * Indicates request success.
+   */
+  success: boolean;
 }
 
 /**
