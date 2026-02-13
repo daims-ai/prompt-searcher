@@ -1,0 +1,39 @@
+{
+  "name": "prompt-searcher",
+  "version": "0.1.0",
+  "description": "Official JavaScript / TypeScript library for the DAIMS API",
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=18"
+  },
+  "sideEffects": false,
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": ["dist", "README.md", "LICENSE"],
+  "scripts": {
+    "build": "tsup",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "biome check .",
+    "format": "biome format --write .",
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs",
+    "docs:preview": "vitepress preview docs"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
+    "@types/node": "^22.13.4",
+    "tsup": "^8.4.0",
+    "typescript": "^5.7.3",
+    "vitepress": "^1.6.3",
+    "vitest": "^3.0.6"
+  }
+}
