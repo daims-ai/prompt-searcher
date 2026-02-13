@@ -3,7 +3,7 @@
 ## Install
 
 ```bash
-npm install prompt-searcher
+pnpm add prompt-searcher
 ```
 
 ## Usage
