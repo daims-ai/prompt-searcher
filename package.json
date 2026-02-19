@@ -3,6 +3,16 @@
   "version": "0.1.0",
   "description": "Official JavaScript / TypeScript library for the DAIMS API",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/daims-ai/prompt-searcher"
+  },
+  "homepage": "https://github.com/daims-ai/prompt-searcher#readme",
+  "bugs": {
+    "url": "https://github.com/daims-ai/prompt-searcher/issues"
+  },
+  "keywords": ["daims", "api", "prompt", "searcher"],
+  "author": "daims-ai <support@daims.ai>",
   "type": "module",
   "engines": {
     "node": ">=18"
