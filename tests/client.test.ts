@@ -63,15 +63,7 @@ describe("DaimsClient", () => {
   it("sends getPrompt request with skey", async () => {
     const payload = {
       success: true,
-      detail: {
-        key: "k",
-        maker: "maker",
-        model: "model",
-        prompts: ["prompt"],
-        provider: "provider",
-        refs: "refs",
-        type: "type",
-      },
+      prompt: "prompt"
     } satisfies GetPromptResponse;
 
     const fetchMock = vi.fn(async () => jsonResponse(payload));
