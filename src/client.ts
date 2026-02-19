@@ -11,7 +11,7 @@ import type {
  * API client for interacting with the DAIMS endpoints.
  */
 export class DaimsClient {
-  private readonly apiKey: string;
+  private readonly apiKey?: string;
   private readonly timeoutMs?: number;
   private readonly fetchImpl?: typeof fetch;
   public readonly imageBaseUrl: string;
@@ -20,15 +20,8 @@ export class DaimsClient {
    * Creates a new DAIMS API client.
    *
    * @param options - Client configuration.
-   * @throws {DaimsApiError} If `apiKey` is missing.
    */
-  constructor(options: DaimsClientOptions) {
-    if (!options?.apiKey) {
-      throw new DaimsApiError("apiKey is required to initialize DaimsClient.", {
-        code: "CONFIG_ERROR",
-      });
-    }
-
+  constructor(options: DaimsClientOptions = {}) {
     this.apiKey = options.apiKey;
     this.timeoutMs = options.timeoutMs;
     this.fetchImpl = options.fetch;
