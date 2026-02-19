@@ -14,6 +14,7 @@ export class DaimsClient {
   private readonly apiKey: string;
   private readonly timeoutMs?: number;
   private readonly fetchImpl?: typeof fetch;
+  public readonly imageBaseUrl: string;
 
   /**
    * Creates a new DAIMS API client.
@@ -31,6 +32,7 @@ export class DaimsClient {
     this.apiKey = options.apiKey;
     this.timeoutMs = options.timeoutMs;
     this.fetchImpl = options.fetch;
+    this.imageBaseUrl = "https://asset.daims.ai/images";
   }
 
   /**
