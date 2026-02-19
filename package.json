@@ -1,6 +1,6 @@
 {
   "name": "prompt-searcher",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Official JavaScript / TypeScript library for the DAIMS API",
   "license": "MIT",
   "repository": {
@@ -11,6 +11,7 @@
   "bugs": {
     "url": "https://github.com/daims-ai/prompt-searcher/issues"
   },
+  "docs": "https://daims-ai.github.io/prompt-searcher/",
   "keywords": ["daims", "api", "prompt", "searcher"],
   "author": "daims-ai <support@daims.ai>",
   "type": "module",
