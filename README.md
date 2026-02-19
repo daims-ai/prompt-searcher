@@ -6,11 +6,31 @@ Official JavaScript / TypeScript SDK for the DAIMS API.
 
 ## About
 
-## Install
+Write **better** and **safer conditions**. Pattern matching lets you express complex conditions in a single, compact expression. Your code becomes **shorter** and **more readable**. Exhaustiveness checking ensures you haven’t forgotten **any possible case**.
 
-```bash
-pnpm add prompt-searcher
+![ts-pattern](https://user-images.githubusercontent.com/9265418/231688650-7cd957a9-8edc-4db8-a5fe-61e1c2179d91.gif)
+
+<p align="center"><i>Animation by <a target="_blank" href="https://twitter.com/nicoespeon/status/1644342570389061634?s=20">@nicoespeon</a></i></p>
+
+
+## Installation
+
+Via npm
+
+```sh
+npm install prompt-searcher
 ```
+
+You can also use your favorite package manager:
+
+```sh
+pnpm add prompt-searcher
+# OR
+yarn add prompt-searcher
+# OR
+bun add prompt-searcher
+```
+
 
 ## Quick start
 
