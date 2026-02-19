@@ -1,7 +1,7 @@
 import { DaimsApiError } from "./errors";
 
 interface RequestJsonOptions {
-  apiKey: string;
+  apiKey?: string;
   path: string;
   body?: unknown;
   timeoutMs?: number;
@@ -57,12 +57,15 @@ export async function requestJson<T>(options: RequestJsonOptions): Promise<T> {
 
   try {
     const url = new URL(options.path, API_BASE_URL).toString();
+    const headers: Record<string, string> = {
+      "Content-Type": "application/json",
+    };
+    if (options.apiKey) {
+      headers.Authorization = `Bearer ${options.apiKey}`;
+    }
     const response = await fetchImpl(url, {
       method: "POST",
-      headers: {
-        Authorization: `Bearer ${options.apiKey}`,
-        "Content-Type": "application/json",
-      },
+      headers,
       body: JSON.stringify(options.body ?? {}),
       signal: controller.signal,
     });
