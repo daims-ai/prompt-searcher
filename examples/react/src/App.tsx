@@ -54,7 +54,7 @@ function App() {
       const reader = new FileReader();
       reader.onloadend = () => {
         const result = reader.result as string;
-        // base64 부분만 추출 (data:image/...;base64, 제거)
+        // Extract only the base64 part (remove data:image/...;base64,)
         const base64 = result.split(",")[1];
         setImageBase64(base64);
         setImagePreview(result);
@@ -70,7 +70,9 @@ function App() {
 
     if (!searchValue) {
       setError(
-        isKeywordSearch ? "검색어를 입력해주세요." : "이미지를 선택해주세요.",
+        isKeywordSearch
+          ? "Please enter a search keyword."
+          : "Please select an image.",
       );
       return;
     }
@@ -89,14 +91,14 @@ function App() {
       if (response.success) {
         setResults(response.data.items);
         if (response.data.items.length === 0) {
-          setError("검색 결과가 없습니다.");
+          setError("No search results found.");
         }
       } else {
-        setError("검색에 실패했습니다.");
+        setError("Search failed.");
       }
     } catch (err) {
       setError(
-        err instanceof Error ? err.message : "알 수 없는 오류가 발생했습니다.",
+        err instanceof Error ? err.message : "An unknown error occurred.",
       );
     } finally {
       setLoading(false);
@@ -105,7 +107,7 @@ function App() {
 
   const handleGetPrompt = useCallback(async (skey: string) => {
     if (!API_KEY) {
-      setError("API 키가 설정되지 않았습니다.");
+      setError("API key is not set.");
       return;
     }
 
@@ -113,18 +115,17 @@ function App() {
     setError(null);
 
     try {
-      const client = new DaimsClient({ apiKey: API_KEY });
       const response = await client.getPrompt(skey);
 
       if (response.success) {
         setSelectedPrompt(response.prompt);
         setPromptDialogOpen(true);
       } else {
-        setError("프롬프트를 가져오는데 실패했습니다.");
+        setError("Failed to fetch prompt.");
       }
     } catch (err) {
       setError(
-        err instanceof Error ? err.message : "알 수 없는 오류가 발생했습니다.",
+        err instanceof Error ? err.message : "An unknown error occurred.",
       );
     } finally {
       setLoading(false);
@@ -149,7 +150,7 @@ function App() {
             </h1>
           </div>
           <p className="text-muted-foreground text-lg">
-            DAIMS API를 활용한 프롬프트 검색 예제
+            Prompt search example using DAIMS API
           </p>
         </header>
 
@@ -159,7 +160,7 @@ function App() {
             <div className="flex flex-col gap-4 md:flex-row md:items-end">
               {/* Card Type Select */}
               <div className="flex flex-col gap-2">
-                <span className="text-sm font-medium">카드 타입</span>
+                <span className="text-sm font-medium">Card Type</span>
                 <Select
                   value={cardType}
                   onValueChange={(value: "create" | "edit") =>
@@ -168,7 +169,7 @@ function App() {
                 >
                   <SelectTrigger
                     className="w-[140px]"
-                    aria-label="카드 타입 선택"
+                    aria-label="Select card type"
                   >
                     <SelectValue />
                   </SelectTrigger>
@@ -181,7 +182,7 @@ function App() {
 
               {/* Search Type Select */}
               <div className="flex flex-col gap-2">
-                <span className="text-sm font-medium">검색 타입</span>
+                <span className="text-sm font-medium">Search Type</span>
                 <Select
                   value={searchType}
                   onValueChange={(value: SearchRequestParams["search_type"]) =>
@@ -190,7 +191,7 @@ function App() {
                 >
                   <SelectTrigger
                     className="w-[140px]"
-                    aria-label="검색 타입 선택"
+                    aria-label="Select search type"
                   >
                     <SelectValue />
                   </SelectTrigger>
@@ -207,7 +208,7 @@ function App() {
                 {searchType === "keyword" ? (
                   <Input
                     type="text"
-                    placeholder="검색어를 입력하세요..."
+                    placeholder="Enter search keyword..."
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
                     onKeyDown={handleKeyDown}
@@ -224,7 +225,7 @@ function App() {
                     {imagePreview && (
                       <img
                         src={imagePreview}
-                        alt="미리보기"
+                        alt="Preview"
                         className="size-10 rounded object-cover"
                       />
                     )}
@@ -232,7 +233,7 @@ function App() {
                 )}
                 <Button onClick={handleSearch} disabled={loading}>
                   {loading ? <Loader2 className="animate-spin" /> : <Search />}
-                  검색
+                  Search
                 </Button>
               </div>
             </div>
@@ -250,8 +251,8 @@ function App() {
         {results.length > 0 && (
           <section>
             <div className="mb-4 flex items-center gap-2">
-              <h2 className="text-xl font-semibold">검색 결과</h2>
-              <Badge variant="secondary">{results.length}개</Badge>
+              <h2 className="text-xl font-semibold">Search Results</h2>
+              <Badge variant="secondary">{results.length} results</Badge>
             </div>
             <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
               {results.map((item) => (
@@ -274,7 +275,7 @@ function App() {
                         className="cursor-pointer"
                       >
                         <Eye className="size-4" />
-                        프롬프트 보기
+                        View Prompt
                       </Button>
                     </div>
                   </div>
@@ -290,10 +291,10 @@ function App() {
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
                 <Sparkles className="size-5" />
-                프롬프트
+                Prompt
               </DialogTitle>
               <DialogDescription>
-                이미지 생성에 사용된 프롬프트입니다.
+                This is the prompt used for image generation.
               </DialogDescription>
             </DialogHeader>
             <div className="max-h-[60vh] overflow-auto rounded-lg bg-muted p-4">
