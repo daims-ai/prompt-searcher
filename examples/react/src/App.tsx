@@ -26,8 +26,8 @@ import {
 import { Badge } from "@/components/ui/badge";
 
 const API_KEY = "test";
-const IMAGE_BASE_URL = "https://asset.daims.ai/images";
 const client = new DaimsClient({ apiKey: API_KEY });
+const IMAGE_BASE_URL = client.imageBaseUrl;
 
 function App() {
   const [query, setQuery] = useState("");
