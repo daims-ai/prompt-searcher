@@ -17,8 +17,8 @@ hero:
       text: Get Started
       link: /guide/quick-start
     - theme: alt
-      text: API Reference
-      link: /api/client
+      text: View on Github
+      link: https://github.com/daims-ai/prompt-searcher
 
 features:
   - title: Simple API

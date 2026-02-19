@@ -1,6 +1,10 @@
-# prompt-searcher
+<h1 align="center">Prompt-Searcher</h1>
 
+<p align="center">
 Official JavaScript / TypeScript SDK for the DAIMS API.
+</p>
+
+## About
 
 ## Install
 
