@@ -61,7 +61,7 @@ export async function requestJson<T>(options: RequestJsonOptions): Promise<T> {
       "Content-Type": "application/json",
     };
     if (options.apiKey) {
-      headers.Authorization = `Bearer ${options.apiKey}`;
+      headers["x-api-key"] = options.apiKey;
     }
     const response = await fetchImpl(url, {
       method: "POST",

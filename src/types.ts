@@ -115,7 +115,7 @@ export interface GetPromptResponse {
  */
 export interface DaimsClientOptions {
   /**
-   * API key used for Bearer authentication.
+   * API key used for x-api-key authentication.
    * If omitted, requests will be sent without authorization.
    */
   apiKey?: string;

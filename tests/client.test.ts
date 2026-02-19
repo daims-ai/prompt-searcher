@@ -48,7 +48,7 @@ describe("DaimsClient", () => {
     expect(url).toBe("https://api.daims.ai/api/search");
     expect(init.method).toBe("POST");
     expect(init.headers).toMatchObject({
-      Authorization: "Bearer test-key",
+      "x-api-key": "test-key",
       "Content-Type": "application/json",
     });
     expect(JSON.parse(init.body as string)).toEqual({
