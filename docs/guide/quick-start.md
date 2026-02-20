@@ -11,9 +11,7 @@ pnpm add prompt-searcher
 ```ts
 import { DaimsClient } from "prompt-searcher";
 
-const client = new DaimsClient({
-  apiKey: process.env.DAIMS_API_KEY!,
-});
+const client = new DaimsClient();
 
 const searchResult = await client.search({
   card_type: "create",
