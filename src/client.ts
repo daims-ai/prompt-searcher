@@ -11,10 +11,19 @@ import type {
  * API client for interacting with the DAIMS endpoints.
  */
 export class DaimsClient {
+  /**
+   * Base URL for the image storage.
+   * Search result images are served from this address.
+   * To retrieve an image, use `${imageBaseUrl}/${metadata.key}`.
+   */
+  public readonly imageBaseUrl: string = "https://asset.daims.ai/images";
+  /**
+   * The API key limits the number of search results.
+   * To obtain a key, visit https://daims.ai.
+   */
   private readonly apiKey?: string;
   private readonly timeoutMs?: number;
   private readonly fetchImpl?: typeof fetch;
-  public readonly imageBaseUrl: string;
 
   /**
    * Creates a new DAIMS API client.
@@ -25,7 +34,6 @@ export class DaimsClient {
     this.apiKey = options.apiKey;
     this.timeoutMs = options.timeoutMs;
     this.fetchImpl = options.fetch;
-    this.imageBaseUrl = "https://asset.daims.ai/images";
   }
 
   /**
