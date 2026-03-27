@@ -1,7 +1,18 @@
 import { readFileSync } from 'fs'
+import { fileURLToPath } from 'url'
+import { dirname, join } from 'path'
 import { DaimsClient } from '../dist/index.js'
 
-const API_KEY = process.env.DAIMS_API_KEY || 'YOUR_API_KEY_HERE'
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = dirname(__filename)
+
+const API_KEY = process.argv[2] || process.env.DAIMS_API_KEY
+const IMAGE_PATH = process.argv[3] || join(__dirname, 'test.png')
+
+if (!API_KEY) {
+  console.error('Usage: node tester.js <api_key> [image_path]')
+  process.exit(1)
+}
 
 const client = new DaimsClient({ apiKey: API_KEY })
 
@@ -31,11 +42,9 @@ async function runTests() {
   }
 
   // Test 2: Search with style using image file as base64
-  console.log('\n2. Searching by style with image file...')
+  console.log(`\n2. Searching by style with image file: ${IMAGE_PATH}`)
   try {
-    const imageBuffer = readFileSync(
-      new URL('./illustration-DSYSxJLi.png', import.meta.url).pathname
-    )
+    const imageBuffer = readFileSync(IMAGE_PATH)
     const base64Image = imageBuffer.toString('base64')
     const dataUrl = `data:image/png;base64,${base64Image}`
 
