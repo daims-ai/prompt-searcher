@@ -231,3 +231,104 @@ export interface DaimsClientOptions {
    */
   fetch?: typeof fetch
 }
+
+/**
+ * Workflow execution data passed to the workflow runner.
+ */
+export interface WorkflowData {
+  [key: string]: unknown
+}
+
+/**
+ * Response from `POST /run_a_sync`.
+ */
+export interface RunWorkflowResponse {
+  /**
+   * Unique workflow execution identifier.
+   */
+  id: string
+  /**
+   * Initial status of the workflow.
+   */
+  status: string
+}
+
+/**
+ * Response from `GET /status/:id`.
+ */
+export interface WorkflowStatusResponse {
+  /**
+   * Workflow execution identifier.
+   */
+  id: string
+  /**
+   * Current status of the workflow ('running', 'done', 'error', etc.).
+   */
+  status: string
+  /**
+   * Additional status data.
+   */
+  data?: unknown
+}
+
+/**
+ * Options for workflow execution.
+ */
+export interface RunWorkflowOptions {
+  /**
+   * Workflow execution data.
+   */
+  data: WorkflowData
+  /**
+   * Polling interval in milliseconds.
+   *
+   * @default 5000
+   * @unit milliseconds
+   */
+  pollIntervalMs?: number
+  /**
+   * Maximum polling time in milliseconds.
+   *
+   * @default 300000 (5 minutes)
+   * @unit milliseconds
+   */
+  maxPollTimeMs?: number
+  /**
+   * Download path for the result file (relative to project root).
+   *
+   * @default './data/{id}.json'
+   */
+  downloadPath?: string
+  /**
+   * Host URL for workflow execution.
+   *
+   * @default 'https://sk-pkg.daims.ai'
+   */
+  workflowHost?: string
+  /**
+   * Custom `fetch` implementation for download/delete operations.
+   */
+  fetch?: typeof fetch
+}
+
+/**
+ * Result of a workflow execution.
+ */
+export interface RunWorkflowResult {
+  /**
+   * Workflow execution identifier.
+   */
+  id: string
+  /**
+   * Final status of the workflow.
+   */
+  status: string
+  /**
+   * Download path if the workflow completed successfully.
+   */
+  downloadPath?: string
+  /**
+   * Status response data.
+   */
+  statusData?: WorkflowStatusResponse
+}

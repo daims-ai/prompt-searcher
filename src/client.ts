@@ -1,5 +1,5 @@
 import { DaimsApiError } from './errors'
-import { requestJson } from './http'
+import { downloadWithResume, deleteFile, requestJson } from './http'
 import type {
   DaimsClientOptions,
   GeneratePromptRequest,
@@ -8,8 +8,12 @@ import type {
   GetPromptResponse,
   HistoryItem,
   SearchResponse,
-  SearchRequestParams
+  SearchRequestParams,
+  RunWorkflowOptions,
+  RunWorkflowResult,
+  WorkflowStatusResponse
 } from './types'
+import * as path from 'node:path'
 
 /**
  * API client for interacting with the DAIMS endpoints.
@@ -217,6 +221,111 @@ export class DaimsClient {
       timeoutMs: this.timeoutMs,
       fetchImpl: this.fetchImpl,
       apiBaseUrl: this.apiBaseUrl
+    })
+  }
+
+  /**
+   * Executes a workflow synchronously with status polling.
+   *
+   * Sends `POST /run_a_sync` and polls `GET /status/:id` until completion.
+   * Downloads the result to a file when the workflow completes successfully.
+   *
+   * @param options - Workflow execution options.
+   * @returns Workflow execution result.
+   */
+  async runWorkflow(options: RunWorkflowOptions): Promise<RunWorkflowResult> {
+    const workflowHost = options.workflowHost ?? 'https://sk-pkg.daims.ai'
+    const pollIntervalMs = options.pollIntervalMs ?? 5000
+    const maxPollTimeMs = options.maxPollTimeMs ?? 300000
+    const fetchImpl = options.fetch ?? globalThis.fetch
+
+    if (typeof fetchImpl !== 'function') {
+      throw new DaimsApiError('Global fetch is not available in this runtime.', {
+        code: 'FETCH_UNAVAILABLE'
+      })
+    }
+
+    // Start workflow execution
+    const runResponse = await fetchImpl(`${workflowHost}/run_a_sync`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(options.data),
+      signal: this.timeoutMs ? AbortSignal.timeout(this.timeoutMs) : undefined
+    })
+
+    if (!runResponse.ok) {
+      const errorText = await runResponse.text()
+      throw new DaimsApiError(`Workflow start failed: ${runResponse.status} - ${errorText}`, {
+        code: 'WORKFLOW_START_ERROR',
+        status: runResponse.status
+      })
+    }
+
+    const runData = (await runResponse.json()) as { id: string; status: string }
+    const { id } = runData
+
+    if (!id) {
+      throw new DaimsApiError('Workflow ID is missing in the response.', {
+        code: 'WORKFLOW_START_ERROR'
+      })
+    }
+
+    // Poll for status
+    const startTime = Date.now()
+    let statusData: WorkflowStatusResponse | undefined
+
+    while (Date.now() - startTime < maxPollTimeMs) {
+      await new Promise((resolve) => setTimeout(resolve, pollIntervalMs))
+
+      try {
+        const statusResponse = await fetchImpl(`${workflowHost}/status/${id}`)
+
+        if (!statusResponse.ok) {
+          throw new DaimsApiError(`Status check failed: ${statusResponse.status}`, {
+            code: 'WORKFLOW_STATUS_ERROR',
+            status: statusResponse.status
+          })
+        }
+
+        statusData = (await statusResponse.json()) as WorkflowStatusResponse
+
+        if (statusData.status === 'done' || statusData.status === 'error') {
+          // Download result if successful
+          if (statusData.status === 'done') {
+            const downloadUrl = `${workflowHost}/download/${id}`
+            const downloadPath = options.downloadPath
+              ? path.resolve(options.downloadPath.replace('{id}', id))
+              : path.resolve(`./data/${id}.json`)
+
+            await downloadWithResume(downloadUrl, downloadPath, fetchImpl)
+            await deleteFile(downloadUrl, fetchImpl)
+
+            return {
+              id,
+              status: statusData.status,
+              downloadPath,
+              statusData
+            }
+          }
+
+          return {
+            id,
+            status: statusData.status,
+            statusData
+          }
+        }
+      } catch (error) {
+        throw new DaimsApiError('Status polling failed.', {
+          code: 'WORKFLOW_STATUS_ERROR',
+          cause: error
+        })
+      }
+    }
+
+    throw new DaimsApiError(`Workflow polling timed out after ${maxPollTimeMs}ms.`, {
+      code: 'WORKFLOW_TIMEOUT'
     })
   }
 }

@@ -1,4 +1,6 @@
 import { DaimsApiError } from './errors'
+import * as fs from 'node:fs'
+import * as path from 'node:path'
 
 interface RequestJsonOptions {
   apiKey?: string
@@ -11,6 +13,7 @@ interface RequestJsonOptions {
 
 const DEFAULT_TIMEOUT_MS = 10_000
 const DEFAULT_API_BASE_URL = 'https://api.daims.ai'
+const DEFAULT_WORKFLOW_HOST = 'https://sk-pkg.daims.ai'
 
 function getMessageFromBody(body: unknown): string | undefined {
   if (typeof body === 'string' && body.length > 0) {
@@ -102,5 +105,85 @@ export async function requestJson<T>(options: RequestJsonOptions): Promise<T> {
     })
   } finally {
     clearTimeout(timeoutId)
+  }
+}
+
+/**
+ * Downloads a file with resume support.
+ * Uses Range header to resume partial downloads.
+ */
+export async function downloadWithResume(
+  url: string,
+  outputPath: string,
+  fetchImpl: typeof fetch
+): Promise<void> {
+  const dir = path.dirname(outputPath)
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true })
+  }
+
+  const existingFile = fs.existsSync(outputPath)
+  let startByte = 0
+
+  if (existingFile) {
+    startByte = fs.statSync(outputPath).size
+  }
+
+  const headers: Record<string, string> = {}
+  if (startByte > 0) {
+    headers.Range = `bytes=${startByte}-`
+  }
+
+  const response = await fetchImpl(url, {
+    method: 'GET',
+    headers
+  })
+
+  if (!response.ok) {
+    throw new DaimsApiError(`Download failed with status ${response.status}`, {
+      code: 'DOWNLOAD_ERROR',
+      status: response.status
+    })
+  }
+
+  const contentLength = response.headers.get('content-length')
+  const totalSize = contentLength ? parseInt(contentLength, 10) : 0
+
+  const fileStream = fs.createWriteStream(outputPath, {
+    flags: startByte > 0 ? 'a' : 'w'
+  })
+
+  const reader = response.body?.getReader()
+  if (!reader) {
+    throw new DaimsApiError('Response body is not readable', {
+      code: 'DOWNLOAD_ERROR'
+    })
+  }
+
+  try {
+    while (true) {
+      const { done, value } = await reader.read()
+      if (done) break
+      fileStream.write(value)
+    }
+  } finally {
+    reader.releaseLock()
+    fileStream.end()
+  }
+}
+
+/**
+ * Deletes a file from the server.
+ */
+export async function deleteFile(url: string, fetchImpl: typeof fetch): Promise<void> {
+  const response = await fetchImpl(url, {
+    method: 'DELETE'
+  })
+
+  if (!response.ok) {
+    throw new DaimsApiError(`Delete failed with status ${response.status}`, {
+      code: 'DELETE_ERROR',
+      status: response.status
+    })
   }
 }
