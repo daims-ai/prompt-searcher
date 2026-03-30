@@ -227,7 +227,7 @@ export class DaimsClient {
   /**
    * Executes a workflow synchronously with status polling.
    *
-   * Sends `POST /run_a_sync` and polls `GET /status/:id` until completion.
+   * Sends `POST /me/workflow` and polls `GET /status/:id` until completion.
    * Downloads the result to a file when the workflow completes successfully.
    *
    * @param options - Workflow execution options.
@@ -246,7 +246,7 @@ export class DaimsClient {
     }
 
     // Start workflow execution
-    const runResponse = await fetchImpl(`${workflowHost}/run_a_sync`, {
+    const runResponse = await fetchImpl(`${this.apiBaseUrl}/me/workflow`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
