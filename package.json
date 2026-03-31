@@ -1,6 +1,6 @@
 {
   "name": "prompt-searcher",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "Official JavaScript / TypeScript library for the DAIMS API",
   "license": "MIT",
   "repository": {

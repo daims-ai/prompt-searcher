@@ -13,7 +13,7 @@ interface RequestJsonOptions {
 
 const DEFAULT_TIMEOUT_MS = 10_000
 const DEFAULT_API_BASE_URL = 'https://api.daims.ai'
-const DEFAULT_WORKFLOW_HOST = 'https://sk-pkg.daims.ai'
+// const DEFAULT_WORKFLOW_HOST = 'https://sk-pkg.daims.ai'
 
 function getMessageFromBody(body: unknown): string | undefined {
   if (typeof body === 'string' && body.length > 0) {
