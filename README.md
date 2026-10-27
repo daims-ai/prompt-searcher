@@ -6,6 +6,8 @@ Official JavaScript / TypeScript SDK for the DAIMS API.
 
 ## Installation
 
+Requires Node.js 22.23.4. The project version is pinned in `.nvmrc`.
+
 Via npm
 
 ```sh
